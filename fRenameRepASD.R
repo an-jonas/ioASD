@@ -2,23 +2,31 @@
 # Rename ASD files of replicated measurements
 #======================================================================================
 
-fRenameRepASD <- function(dirfrom, dirto, yyyymmdd, pos="Can", expID = "WW012", start="Lot3", rep = NULL){
+fRenameRepASD <- function(dirfrom, dirto, yyyymmdd, pos="Can", expID="WW012", idFilter=NULL, start="Lot3", rep=NULL, skipNoRow=4){
   
-  # dirfrom <- "O:/FIP/2016/WW012/ASD/raw/20160526"
-  # dirto <- "O:/FIP/2016/WW012/ASD/20160526"
-  # yyyymmdd <- "20160526"
+  # dirfrom <- "O:/FIP/2016/WW013/ASD/raw/20160527"
+  # dirto <- "O:/FIP/2016/WW013/ASD/20160527"
+  # yyyymmdd <- "20160527"
   # pos <- "Can"
-  # expID <- "WW012"
-  # rep <- 2
+  # expID <- "WW013"
+  # rep <- 3
+  # idFilter <- "RunID_20"
   
   ## prepare file names
   library(gdata)
   library(xlsx)
   
   dfnamesheet <- "O:/FIP/2016/Feldbuch/WW/2015_Design_FPWW012_FPWW016.xls"
-  dfname <- read.xls(dfnamesheet, paste0("PlotList_", expID), stringsAsFactors=FALSE, skip=4)
-  
+  dfname <- read.xls(dfnamesheet, paste0("PlotList_", expID), stringsAsFactors=FALSE, skip=skipNoRow)
   dfname <- dfname[-which(dfname$Plot == 0),]
+  
+  #----------------
+  # for WW013
+  if (expID == "WW013"){
+    dfname <- read.xls("O:/FIP/2016/WW013/ASD/raw/ASD_Run.xlsx", "ASD_Run")
+    dfname <- dfname[!is.na(dfname[idFilter]),] 
+  }
+  #----------------
   
   dfname1 <- dfname[rep(rownames(dfname), each = rep), ]
   suffix <- lapply(lapply(lapply(row.names(dfname1), strsplit, ".", fixed=TRUE), unlist), function(x) x=as.numeric(x[2]))
@@ -46,9 +54,7 @@ fRenameRepASD <- function(dirfrom, dirto, yyyymmdd, pos="Can", expID = "WW012", 
   # list.files order acoording to file names
   filelist <- basename(list.files(path = dirfrom, pattern = "^ww.+[.]asd$", ignore.case = TRUE ))
   
-  # check number of old and new names whether equal or not
-  stopifnot(length(filelist) == nrow(df))
-  
+
   # move soil spectral files first before renaming
   indSoil <- grep("soil", filelist)
   soilfile <- filelist[indSoil]
@@ -60,6 +66,9 @@ fRenameRepASD <- function(dirfrom, dirto, yyyymmdd, pos="Can", expID = "WW012", 
     # new list
     filelist <- filelist[-indSoil]
   }
+  
+  # check number of old and new names whether equal or not
+  stopifnot(length(filelist) == nrow(df))
   
   
   ## renaming func
