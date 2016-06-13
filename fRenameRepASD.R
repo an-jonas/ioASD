@@ -83,12 +83,12 @@ fRenameRepASD <- function(dirfrom, dirto, yyyymmdd, pos="Can", expID = "WW012", 
   return(log)
 }
 
-## demo
-yyyymmdd <- "20160526"
-fRenameRepASD(paste0("O:/FIP/2016/WW012/ASD/raw/", yyyymmdd),
-              paste0("O:/FIP/2016/WW012/ASD/", yyyymmdd),
-              yyyymmdd,
-              pos="Can",
-              expID = "WW012",
-              start = "Lot3",
-              rep = 2)
+### example:
+# yyyymmdd <- "20160526"
+# fRenameRepASD(paste0("O:/FIP/2016/WW012/ASD/raw/", yyyymmdd),
+#               paste0("O:/FIP/2016/WW012/ASD/", yyyymmdd),
+#               yyyymmdd,
+#               pos="Can",
+#               expID = "WW012",
+#               start = "Lot3",
+#               rep = 2)
